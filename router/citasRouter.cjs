@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const validateJWT = require("../auth/JWT/generateJWT.cjs");
+const validateJWT = require("../middlewares/validateJWT.cjs");
 const validateRole = require("../middlewares/validateRole.cjs");
 const citasController = require("../controllers/citasController.cjs");
 

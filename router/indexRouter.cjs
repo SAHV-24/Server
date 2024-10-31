@@ -12,6 +12,6 @@ router.use("/Contratistas", contratistasRouter);
 router.use("/Categorias", categoriasRouter);
 router.use("/Citas", citasRouter);
 
-router.use("/login",authRouter)
+router.use("/Auth",authRouter)
 
 module.exports = router;

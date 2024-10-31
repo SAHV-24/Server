@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 // tiene los permisos suficientes para hacerlo.
 // Si no tiene ni ADMIN ni CLIENT, no se puede hacer nada.
 function validateRole(req, res = response, next) {
+
   // valida si el rol es el correcto
   const token = req.header("jwt-token");
   if (!token) {

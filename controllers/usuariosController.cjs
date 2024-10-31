@@ -13,6 +13,7 @@ module.exports.getAll = async (req, res) => {
 };
 
 module.exports.getByEmail = async (req, res) => {
+
   const email = req.params.email;
   try {
     const answer = await Usuarios.findOne({ email: email }).lean();
@@ -50,7 +51,6 @@ module.exports.getByUsername = async (req, res) => {
 // INSERT
 module.exports.insert = async (req, res) => {
   try {
-    
     const { email, username } = req.body;
 
     const existingEmail = await Usuarios.findOne({ email });
@@ -63,12 +63,12 @@ module.exports.insert = async (req, res) => {
       return res.status(409).send({ message: "Username already exists." });
     }
 
-    const usuario = await new Usuarios({ ...req.body });
+    const usuario = new Usuarios({ ...req.body });
     const answer = await usuario.save();
     res.status(201).send(usuario);
   } catch (err) {
-    console.error(err);
-    res.status(400).send(err);
+    console.error("There was an error:", err.message);
+    res.status(400).send({ message: err.message });
   }
 };
 

@@ -2,10 +2,10 @@ const generateJWT = require("../auth/JWT/generateJWT.cjs");
 const { response } = require("express");
 
 module.exports.generateToken = async (req, res = response) => {
-  const { uid, username, role } = req.body;
+  const { uid, username, role, secretKey } = req.body;
 
   try {
-    const token = await generateJWT(uid, username, role);
+    const token = await generateJWT(uid, username, role, secretKey);
 
     if (token) {
       // Establecer el token en el cuerpo de la respuesta
