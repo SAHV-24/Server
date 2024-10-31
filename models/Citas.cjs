@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const StringReq = require("./utils/Strings.cjs").StringReq;
+const StringReq = require("../utils/Strings.cjs").StringReq;
 
 const citasSchema = {
   idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios" },

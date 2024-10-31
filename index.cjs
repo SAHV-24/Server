@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
-const router = require("./router/router.cjs"); // Cambié la extensión a .cjs
+const router = require("./router/indexRouter.cjs");// Cambié la extensión a .cjs
 const db = require("./db/db.cjs");
-const generateJWT = require("./JWT/generateJWT.cjs");
 const dotenv = require("dotenv");
 
 dotenv.config(); // Cargar variables de entorno
@@ -22,4 +21,4 @@ app.listen(PORT, () => {
   console.log("Server Listening on PORT:" + PORT);
 });
 
-module.exports = app; // Exportar usando CommonJS
+module.exports = app;

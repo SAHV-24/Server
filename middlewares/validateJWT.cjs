@@ -2,7 +2,7 @@ const { response } = require("express");
 const jwt = require("jwt-client");
 
 function validateJWT(req, res = response, next) {
-  // está en este encabezado??
+  
   const token = req.header("jwt-token");
 
   if (!token) {

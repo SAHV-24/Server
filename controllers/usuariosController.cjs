@@ -50,6 +50,7 @@ module.exports.getByUsername = async (req, res) => {
 // INSERT
 module.exports.insert = async (req, res) => {
   try {
+    
     const { email, username } = req.body;
 
     const existingEmail = await Usuarios.findOne({ email });
