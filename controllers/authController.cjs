@@ -19,3 +19,8 @@ module.exports.generateToken = async (req, res = response) => {
     res.status(500).json({ message: err });
   }
 };
+
+
+module.exports.validateTokenAndRetrieveUser = async(req, res=response)=>{
+
+}

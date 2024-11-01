@@ -12,11 +12,16 @@ function validateJWT(req, res = response, next) {
   }
 
   try {
-    // Reemplaza "your-secret-key" con la clave secreta que usaste para firmar el JWT
+    // Verifica el token y extrae el payload
     const decoded = jwt.verify(token, env.SECRET_JWT_SEED);
 
-    // Si es válido, puedes almacenar el contenido del token en `req` para usarlo más adelante
-    req.user = decoded;
+    // Agrega los datos del payload (por ejemplo, username) a req
+    req.user = {
+      uid: decoded.uid,
+      username: decoded.username,
+      role: decoded.role,
+    };
+
     next();
   } catch (error) {
     return res.status(401).json({
