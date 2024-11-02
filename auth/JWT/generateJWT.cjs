@@ -8,7 +8,13 @@ function generateJWT(uid, username, role, secretKey) {
   // que intente generar el token
   if (secretKey === backendSecretKey)
     return new Promise((resolve, reject) => {
+
+      console.log("PROMESA")
+
       if (uid && username && role) {
+
+        console.log("!")
+
         const payload = { uid, username, role };
 
         const isClient = role === "CLIENT";
@@ -32,6 +38,8 @@ function generateJWT(uid, username, role, secretKey) {
           }
         );
       } else {
+        console.log("REJECTEADO")
+
         reject("No se enviaron todos los campos");
       }
     });

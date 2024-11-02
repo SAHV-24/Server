@@ -5,6 +5,9 @@ module.exports.generateToken = async (req, res = response) => {
   const { uid, username, role, secretKey } = req.body;
 
   try {
+
+    console.log({uid,username,role,secretKey})
+
     const token = await generateJWT(uid, username, role, secretKey);
 
     if (token) {
