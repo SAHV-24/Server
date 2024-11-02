@@ -3,15 +3,15 @@ const jwt = require("jsonwebtoken");
 function generateJWT(uid, username, role, secretKey) {
   const backendSecretKey = process.env.SECRET_JWT_SEED;
 
-  console.log(backendSecretKey);
-  console.log(secretKey);
+  console.log(`//${backendSecretKey}//`);
+  console.log(`//${secretKey}//`);
 
   console.log("are the same?");
   console.log(typeof secretKey);
   console.log(typeof backendSecretKey);
   console.log();
   console.log(secretKey === backendSecretKey);
-  console.log(secretKey.toString() === backendSecretKey.toString());
+  console.log(secretKey.trim().toString() === backendSecretKey.trim().toString());
   // Si la llave ENTRANTE, es la misma que tiene el backend entonces
   // que intente generar el token
   if (secretKey.toString() === backendSecretKey.toString())
