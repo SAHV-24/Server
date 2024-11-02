@@ -11,6 +11,17 @@ module.exports.search = async (req, res) => {
     const contratistas = await Contratistas.aggregate([
       {
         $lookup: {
+          from: "Usuarios",
+          localField: "usuarioId",
+          foreignField: "_id",
+          as: "usuarioData",
+        },
+      },
+      {
+        $unwind: { path: "$usuarioData" },
+      },
+      {
+        $lookup: {
           from: "Categorias", // Nombre de la colección de categorías
           localField: "categoriasOfrecidas.idCategoria",
           foreignField: "_id",
@@ -43,12 +54,12 @@ module.exports.search = async (req, res) => {
         $group: {
           _id: "$_id", // Agrupar por el _id del contratista
           rating: { $avg: "$citasContratista.ratingUsuario" }, // Calcular el promedio del rating
-          nombre: { $first: "$nombre" }, // Mantener otros campos
-          apellido: { $first: "$apellido" },
-          ciudad: { $first: "$ciudad" },
-          especialidad: { $first: "$especialidad" },
-          username: { $first: "$username" },
-          fotoDePerfil: { $first: "$fotoDePerfil" },
+          nombre: { $first: "$usuarioData.nombre" }, // Mantener otros campos
+          apellido: { $first: "$usuarioData.apellido" },
+          ciudad: { $first: "$usuarioData.ciudad" },
+          especialidad: { $first: "$usuarioData.especialidad" },
+          username: { $first: "$usuarioData.username" },
+          fotoDePerfil: { $first: "$usuarioData.fotoDePerfil" },
           categoriasOfrecidas: {
             $push: {
               // Cambia a $push para mantener solo la categoría que coincida
@@ -114,9 +125,7 @@ module.exports.getByUsername = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res
-      .status(200)
-      .json(contratistaConUsuario);
+    res.status(200).json(contratistaConUsuario);
   } catch (err) {
     console.error(err, " mientras se intentaba acceder al contratista");
     res.status(500).send(err);
@@ -151,7 +160,9 @@ module.exports.update = async (req, res) => {
       return res.status(404).json({ message: "Contratista no encontrado" });
     }
 
-    res.status(200).json({ message: "Correctamente Actualizado", updatedContratista });
+    res
+      .status(200)
+      .json({ message: "Correctamente Actualizado", updatedContratista });
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.error(error);
