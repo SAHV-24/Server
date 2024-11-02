@@ -3,7 +3,7 @@ const Categorias = require("../models/Categorias.cjs");
 // GET ALL
 module.exports.getAll = async (req, res) => {
   try {
-    const r = await Categorias.findOne();
+    const r = await Categorias.find();
     res.status(200);
     res.json(r);
   } catch (err) {
