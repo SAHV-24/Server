@@ -1,6 +1,8 @@
 const Contratistas = require("../models/Contratistas.cjs");
 
-// SEARCH}}
+// GET AGGREGATION WITH USER
+
+// SEARCH
 
 module.exports.search = async (req, res) => {
   const category = req?.body?.category;
@@ -48,7 +50,8 @@ module.exports.search = async (req, res) => {
           username: { $first: "$username" },
           fotoDePerfil: { $first: "$fotoDePerfil" },
           categoriasOfrecidas: {
-            $push: { // Cambia a $push para mantener solo la categoría que coincida
+            $push: {
+              // Cambia a $push para mantener solo la categoría que coincida
               $filter: {
                 input: "$categoriasOfrecidas",
                 as: "cat",
@@ -60,7 +63,6 @@ module.exports.search = async (req, res) => {
         },
       },
     ]);
-    
 
     res.status(200).json(contratistas);
   } catch (e) {
@@ -69,14 +71,27 @@ module.exports.search = async (req, res) => {
 };
 
 // GET ALL
+
 module.exports.getAll = async (req, res) => {
   try {
-    const answer = await Contratistas.find();
+    const response = await Contratistas.aggregate([
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "usuarioId",
+          foreignField: "_id",
+          as: "usuarioDatos",
+        },
+      },
+      {
+        $unwind: { path: "$usuarioDatos" },
+      },
+    ]);
 
-    res.status(200).json(answer);
-  } catch (err) {
-    console.error(err);
-    res.status(400).send(err);
+    res.status(200).json(response);
+  } catch (exc) {
+    res.status(500).json({ exception: exc.message });
+    console.log(exc);
   }
 };
 
@@ -84,14 +99,24 @@ module.exports.getByUsername = async (req, res) => {
   try {
     const username = req.query.username;
 
-    const answer = await Contratistas.find({ username }).lean();
+    const answer = await Contratistas.find()
+      .populate({
+        path: "usuarioId",
+        match: { username }, // Filtra por username en el documento de Usuario
+        select: "nombre apellido username",
+      })
+      .populate("categoriasOfrecidas.idCategoria", "nombre descripcion");
 
-    // Si no encuentras ningún usuario
-    if (!answer || answer.length === 0) {
+    // Filtramos los contratistas que efectivamente tengan un usuario con ese username
+    const contratistaConUsuario = answer.filter((c) => c.usuarioId);
+
+    if (contratistaConUsuario.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json(answer);
+    res
+      .status(200)
+      .json(contratistaConUsuario);
   } catch (err) {
     console.error(err, " mientras se intentaba acceder al contratista");
     res.status(500).send(err);
@@ -111,36 +136,32 @@ module.exports.insert = async (req, res) => {
   }
 };
 
-// UPDATE
 module.exports.update = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
   try {
-    const contratista = await Contratistas.findById(req.params.id);
+    const updatedContratista = await Contratistas.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
 
-    const body = req.body;
-    // This flag is added because "__v" attribute isn't working idkw
-    const hasBeenUpdated = false;
-
-    Object.keys(body).forEach((key) => {
-      if (body[key]) {
-        contratista[key] = body[key];
-        this.hasBeenUpdated = true;
-      }
-    });
-
-    if (hasBeenUpdated) {
-      contratista["__v"] = contratista["__v"] + 1;
+    if (!updatedContratista) {
+      return res.status(404).json({ message: "Contratista no encontrado" });
     }
-    const answer = await contratista.save();
-    res.status(200).send(answer);
-  } catch (err) {
-    console.error(err);
-    res.status(400).send(err);
+
+    res.status(200).json({ message: "Correctamente Actualizado", updatedContratista });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.error(error);
   }
 };
 
 //DELETE
 module.exports.delete = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.id; // se envía ../delete/${id}
+
   try {
     const answer = await Contratistas.deleteOne({ _id: id });
     res.status(200).send(answer);
