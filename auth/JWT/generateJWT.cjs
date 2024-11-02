@@ -8,7 +8,7 @@ function generateJWT(uid, username, role, secretKey) {
 
   // Si la llave ENTRANTE, es la misma que tiene el backend entonces
   // que intente generar el token
-  if (secretKey === backendSecretKey)
+  if (secretKey.toString() === backendSecretKey.toString())
     return new Promise((resolve, reject) => {
 
       console.log("PROMESA")
