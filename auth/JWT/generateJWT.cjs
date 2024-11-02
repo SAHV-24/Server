@@ -1,21 +1,25 @@
 const jwt = require("jsonwebtoken");
 
 function generateJWT(uid, username, role, secretKey) {
-
   const backendSecretKey = process.env.SECRET_JWT_SEED;
 
-  console.log(backendSecretKey)
+  console.log(backendSecretKey);
+  console.log(secretKey);
 
+  console.log("are the same?");
+  console.log(typeof secretKey);
+  console.log(typeof backendSecretKey);
+  console.log();
+  console.log(secretKey === backendSecretKey);
+  console.log(secretKey.toString() === backendSecretKey.toString());
   // Si la llave ENTRANTE, es la misma que tiene el backend entonces
   // que intente generar el token
   if (secretKey.toString() === backendSecretKey.toString())
     return new Promise((resolve, reject) => {
-
-      console.log("PROMESA")
+      console.log("PROMESA");
 
       if (uid && username && role) {
-
-        console.log("!")
+        console.log("!");
 
         const payload = { uid, username, role };
 
@@ -40,7 +44,7 @@ function generateJWT(uid, username, role, secretKey) {
           }
         );
       } else {
-        console.log("REJECTEADO")
+        console.log("REJECTEADO");
 
         reject("No se enviaron todos los campos");
       }
