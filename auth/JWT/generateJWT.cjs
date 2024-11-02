@@ -4,6 +4,8 @@ function generateJWT(uid, username, role, secretKey) {
 
   const backendSecretKey = process.env.SECRET_JWT_SEED;
 
+  console.log(backendSecretKey)
+
   // Si la llave ENTRANTE, es la misma que tiene el backend entonces
   // que intente generar el token
   if (secretKey === backendSecretKey)
