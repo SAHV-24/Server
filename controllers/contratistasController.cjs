@@ -1,5 +1,5 @@
 const Contratistas = require("../models/Contratistas.cjs");
-
+const mongoose = require("mongoose")
 // GET AGGREGATION WITH USER
 
 // SEARCH
@@ -134,9 +134,6 @@ module.exports.getByUsername = async (req, res) => {
 
 //INSERT
 module.exports.insert = async (req, res) => {
-
-  console.log(req.body)
-
   const contratista = new Contratistas(req.body);
 
   try {
@@ -182,5 +179,31 @@ module.exports.delete = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(400).json(err);
+  }
+};
+
+module.exports.getCategoriasOfrecidas = async (req, res) => {
+  const _id = req.params._id;
+
+  try {
+    const contratistas = await Contratistas.aggregate([
+      { $unwind: "$categoriasOfrecidas" },
+      {
+        $lookup: {
+          from: "Categorias",
+          localField: "categoriasOfrecidas.categoriaId",
+          foreignField: "_id",
+          as: "categoriasDetails",
+        },
+      },
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId("66e4890b5830452cc3c355fe"),
+        },
+      },
+    ]);
+    res.status(200).json(contratistas);
+  } catch (error) {
+    console.error("Error en la agregación:", error);
   }
 };

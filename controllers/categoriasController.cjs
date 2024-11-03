@@ -1,4 +1,5 @@
 const Categorias = require("../models/Categorias.cjs");
+const { default: Contratistas } = require("../models/Contratistas.cjs");
 
 // GET ALL
 module.exports.getAll = async (req, res) => {
