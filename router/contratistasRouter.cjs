@@ -9,7 +9,7 @@ const contratistasController = require("../controllers/contratistasController.cj
 //              ...y no la está haciendo el cliente (cliente = APP)
 
 router.post("/search", [validateRole], contratistasController.search);
-router.get("/", [validateRole], contratistasController.getAll);
+router.get("/", [validateJWT], contratistasController.getAll);
 router.get("/username", [validateRole], contratistasController.getByUsername); //! este se ha cambiado
 router.post("/insert", [validateJWT], contratistasController.insert);
 router.put(
