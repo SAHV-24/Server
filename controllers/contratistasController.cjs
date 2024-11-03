@@ -124,6 +124,15 @@ module.exports.getByUsername = async (req, res) => {
           "usuarioInfo.username": usernameSent,
         },
       },
+      { $unwind: "$categoriasOfrecidas" },
+      {
+        $lookup: {
+          from: "Categorias",
+          localField: "categoriasOfrecidas.categoriaId",
+          foreignField: "_id",
+          as: "categoriasDetails",
+        },
+      },
     ]);
 
     // Filtramos los contratistas que efectivamente tengan un usuario con ese username
