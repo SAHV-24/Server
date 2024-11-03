@@ -1,5 +1,5 @@
 const Contratistas = require("../models/Contratistas.cjs");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 // GET AGGREGATION WITH USER
 
 // SEARCH
@@ -108,15 +108,23 @@ module.exports.getAll = async (req, res) => {
 
 module.exports.getByUsername = async (req, res) => {
   try {
-    const username = req.query.username;
+    const usernameSent = req.params.username;
 
-    const answer = await Contratistas.find()
-      .populate({
-        path: "usuarioId",
-        match: { username }, // Filtra por username en el documento de Usuario
-        select: "nombre apellido username",
-      })
-      .populate("categoriasOfrecidas.idCategoria", "nombre descripcion");
+    const answer = await Contratistas.aggregate([
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "usuarioId",
+          foreignField: "_id",
+          as: "usuarioInfo",
+        },
+      },
+      {
+        $match: {
+          "usuarioInfo.username": usernameSent,
+        },
+      },
+    ]);
 
     // Filtramos los contratistas que efectivamente tengan un usuario con ese username
     const contratistaConUsuario = answer.filter((c) => c.usuarioId);
@@ -198,7 +206,7 @@ module.exports.getCategoriasOfrecidas = async (req, res) => {
       },
       {
         $match: {
-          _id: new mongoose.Types.ObjectId("66e4890b5830452cc3c355fe"),
+          _id: new mongoose.Types.ObjectId(_id),
         },
       },
     ]);

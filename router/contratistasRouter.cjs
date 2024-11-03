@@ -11,7 +11,7 @@ const contratistasController = require("../controllers/contratistasController.cj
 router.post("/search", [validateRole], contratistasController.search);
 router.get("/", [validateJWT], contratistasController.getAll);
 router.get("/getCategoriasOfrecidas/:_id", [validateJWT], contratistasController.getCategoriasOfrecidas);
-router.get("/username", [validateRole], contratistasController.getByUsername); //! este se ha cambiado
+router.get("/getByUsername/:username", [validateRole], contratistasController.getByUsername); //! este se ha cambiado
 router.post("/insert", [validateJWT], contratistasController.insert);
 router.put(
   "/update/:id",
