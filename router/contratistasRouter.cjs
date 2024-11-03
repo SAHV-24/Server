@@ -19,6 +19,8 @@ router.put(
   [validateRole],
   contratistasController.update
 );
+
+
 router.delete(
   "/delete/:id",
   [validateJWT],
