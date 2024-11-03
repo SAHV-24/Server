@@ -20,12 +20,12 @@ const Contratistas = new mongoose.Schema({
   ],
   categoriasOfrecidas: [
     {
-      idCategoria: {
+      categoriaId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "Categoria",
       },
-      precioCategoria: {
+      precio: {
         type: Number,
         required: true,
       },

@@ -134,7 +134,10 @@ module.exports.getByUsername = async (req, res) => {
 
 //INSERT
 module.exports.insert = async (req, res) => {
-  const contratista = new Contratistas({ ...req.body });
+
+  console.log(req.body)
+
+  const contratista = new Contratistas(req.body);
 
   try {
     const answer = await contratista.save();
