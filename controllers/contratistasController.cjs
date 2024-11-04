@@ -23,7 +23,7 @@ module.exports.search = async (req, res) => {
       {
         $lookup: {
           from: "Categorias", // Nombre de la colección de categorías
-          localField: "categoriasOfrecidas.idCategoria",
+          localField: "categoriasOfrecidas.categoriaId",
           foreignField: "_id",
           as: "categoriasInfo",
         },
@@ -66,7 +66,7 @@ module.exports.search = async (req, res) => {
               $filter: {
                 input: "$categoriasOfrecidas",
                 as: "cat",
-                cond: { $eq: ["$$cat.idCategoria", "$categoriasInfo._id"] }, // Filtrar las categorías ofrecidas que coinciden
+                cond: { $eq: ["$$cat.categoriaId", "$categoriasInfo._id"] }, // Filtrar las categorías ofrecidas que coinciden
               },
             },
           },
