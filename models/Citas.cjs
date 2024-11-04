@@ -19,7 +19,7 @@ const citasSchema = {
     required: true,
   },
   estado: {
-    type: [String],
+    type: String,
     enum: ["finalizada","pendiente","cancelada"],
     required: true,
   },
