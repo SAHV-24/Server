@@ -1,4 +1,6 @@
 const Usuarios = require("../models/Usuarios.cjs");
+const Citas = require("../models/Citas.cjs");
+const mongoose = require("mongoose");
 
 // GET ALL
 module.exports.getAll = async (req, res) => {
@@ -13,7 +15,6 @@ module.exports.getAll = async (req, res) => {
 };
 
 module.exports.getByEmail = async (req, res) => {
-
   const email = req.params.email;
   try {
     const answer = await Usuarios.findOne({ email: email }).lean();
@@ -45,6 +46,84 @@ module.exports.getByUsername = async (req, res) => {
   } catch (err) {
     console.error(err, " while trying to access the user");
     res.status(500).send(err);
+  }
+};
+
+// GET LAST CITAS
+
+module.exports.getLastCitas = async (req, res) => {
+  const { _id } = req.params;
+
+  const currentDate = new Date();
+  const thirtyDaysAgo = currentDate.setDate(currentDate.getDate() - 30);
+
+  try {
+    const citas = await Citas.aggregate([
+      // Filtrar citas de los últimos 30 días
+      {
+        $match: {
+          idUsuario: new mongoose.Types.ObjectId(_id),
+          fecha: { $gte: new Date(thirtyDaysAgo) },
+        },
+      },
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "idUsuario",
+          foreignField: "_id",
+          as: "usuarioData",
+        },
+      },
+      {
+        $unwind: "$usuarioData",
+      },
+      {
+        $lookup: {
+          from: "Contratistas",
+          localField: "idContratista",
+          foreignField: "_id",
+          as: "contratistaData",
+        },
+      },
+      {
+        $unwind: "$contratistaData",
+      },
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "contratistaData.usuarioId",
+          foreignField: "_id",
+          as: "contratistaUsuario",
+        },
+      },
+      { $unwind: "$contratistaUsuario" },
+      // Lookup para la colección de categorías
+      {
+        $lookup: {
+          from: "Categorias",
+          localField: "idCategoria",
+          foreignField: "_id",
+          as: "categoriaData",
+        },
+      },
+      {
+        $unwind: "$categoriaData",
+      },
+      {
+        $project: {
+          contratistaUsuario: 1,
+          estado:1,
+          fecha: 1,
+          hora: 1,
+          locacion: 1,
+          ratingUsuario: 1,
+        },
+      },
+    ]);
+
+    res.status(200).send(citas);
+  } catch (exc) {
+    res.status(400).send({ message: `Hubo un error: ${exc.message}` });
   }
 };
 

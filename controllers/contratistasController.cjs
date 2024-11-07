@@ -162,6 +162,66 @@ module.exports.insert = async (req, res) => {
   }
 };
 
+module.exports.getLastCitas = async (req, res) => {
+  const { _id } = req.params;
+
+  const currentDate = new Date();
+  const thirtyDaysAgo = currentDate.setDate(currentDate.getDate() - 30);
+
+  try {
+    const citas = await Citas.aggregate([
+      // Filtrar citas de los últimos 30 días
+      {
+        $match: {
+          idContratista: new mongoose.Types.ObjectId(_id),
+          fecha: { $gte: new Date(thirtyDaysAgo) },
+        },
+      },
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "idUsuario",
+          foreignField: "_id",
+          as: "usuarioData",
+        },
+      },
+      {
+        $unwind: "$usuarioData",
+      },
+      {
+        $lookup: {
+          from: "Contratistas",
+          localField: "idContratista",
+          foreignField: "_id",
+          as: "contratistaData",
+        },
+      },
+      {
+        $unwind: "$contratistaData",
+      },
+      // Lookup para la colección de categorías
+      {
+        $lookup: {
+          from: "Categorias",
+          localField: "idCategoria",
+          foreignField: "_id",
+          as: "categoriaData",
+        },
+      },
+      {
+        $unwind: "$categoriaData",
+      },
+    ]);
+
+    res.status(200).send(citas);
+  } catch (exc) {
+    res.status(400).send({ message: `Hubo un error: ${exc.message}` });
+  }
+};
+
+
+
+
 module.exports.update = async (req, res) => {
   const { id } = req.params;
   const updateData = req.body;
