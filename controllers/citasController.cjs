@@ -11,32 +11,97 @@ module.exports.getAll = async (req, res) => {
   }
 };
 
+module.exports.getByUsername = async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const citas = await Citas.aggregate([
+      // Filtrar citas de los últimos 30 días
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "idUsuario",
+          foreignField: "_id",
+          as: "usuarioData",
+        },
+      },
+      {
+        $unwind: "$usuarioData",
+      },
+      {
+        $match: {
+          "usuarioData.username": username,
+        },
+      },
+      {
+        $lookup: {
+          from: "Contratistas",
+          localField: "idContratista",
+          foreignField: "_id",
+          as: "contratistaData",
+        },
+      },
+      {
+        $unwind: "$contratistaData",
+      },
+      {
+        $lookup: {
+          from: "Usuarios",
+          localField: "contratistaData.usuarioId",
+          foreignField: "_id",
+          as: "contratistaUsuario",
+        },
+      },
+      { $unwind: "$contratistaUsuario" },
+      {
+        $lookup: {
+          from: "Categorias",
+          localField: "idCategoria",
+          foreignField: "_id",
+          as: "categoriaData",
+        },
+      },
+      {
+        $unwind: "$categoriaData",
+      },
+      {
+        $project: {
+          "usuarioData.username": 1,
+          contratistaUsuario: 1,
+          categoriaData: 1,
+          estado: 1,
+          fecha: 1,
+          hora: 1,
+          locacion: 1,
+          ratingUsuario: 1,
+        },
+      },
+    ]);
+
+    res.status(200).send(citas);
+  } catch (exc) {
+    res.status(500).send({ message: exc.message });
+  }
+};
+
 //GET BY ID
 
-module.exports.getById = async (req,res)=>{  
+module.exports.getById = async (req, res) => {
+  try {
+    const _id = req.query._id;
 
-  try{
-    const _id = req.query._id
+    const answer = await Citas.find({ _id }).lean();
 
-    const answer = await Citas.find({_id}).lean()
-
-    if(answer.length == 0 || !answer){
-      res.status(404).send("La cita no fue encontrada")
-    }else{
-      
-      res.status(200).json(answer)
-    }   
-    
-  }catch(err){
-    
-    console.error(`${err} al intentar acceder a la cita con id: ${_id}`)
-    res.status(500).send(err)
+    if (answer.length == 0 || !answer) {
+      res.status(404).send("La cita no fue encontrada");
+    } else {
+      res.status(200).json(answer);
+    }
+  } catch (err) {
+    console.error(`${err} al intentar acceder a la cita con id: ${_id}`);
+    res.status(500).send(err);
   }
-}
-
-
-
-
+};
 
 // INSERT
 module.exports.insert = async (req, res) => {
