@@ -68,6 +68,7 @@ module.exports.getByUsername = async (req, res) => {
         $project: {
           "usuarioData.username": 1,
           contratistaUsuario: 1,
+          idContratista:1,
           categoriaData: 1,
           estado: 1,
           fecha: 1,
@@ -151,7 +152,7 @@ module.exports.update = async (req, res) => {
     if (hasBeenUpdated) {
       cita["__v"] = cita["__v"] + 1;
     }
-    const answer = await cita.save();
+    const answer = await Citas.save(cita);
     res.status(200).send(answer);
   } catch (err) {
     res.status(400).send(err);
