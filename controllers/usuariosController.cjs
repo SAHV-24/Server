@@ -113,7 +113,7 @@ module.exports.getLastCitas = async (req, res) => {
         $project: {
           contratistaUsuario: 1,
           categoriaData: 1,
-          estado:1,
+          estado: 1,
           fecha: 1,
           hora: 1,
           locacion: 1,
