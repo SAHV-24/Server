@@ -68,7 +68,7 @@ module.exports.getByUsername = async (req, res) => {
         $project: {
           "usuarioData.username": 1,
           contratistaUsuario: 1,
-          idContratista:1,
+          idContratista: 1,
           categoriaData: 1,
           estado: 1,
           fecha: 1,
@@ -139,20 +139,16 @@ module.exports.update = async (req, res) => {
     const cita = await Citas.findById(req.params.id);
 
     const body = req.body;
-    // This flag is added because "__v" attribute isn't working idkw
-    const hasBeenUpdated = false;
 
+    // Iteramos sobre los datos del cuerpo y actualizamos los campos de la cita
     Object.keys(body).forEach((key) => {
       if (body[key]) {
         cita[key] = body[key];
-        this.hasBeenUpdated = true;
       }
     });
 
-    if (hasBeenUpdated) {
-      cita["__v"] = cita["__v"] + 1;
-    }
-    const answer = await Citas.save(cita);
+    // Guardamos la cita
+    const answer = await cita.save(); // Cambiado para guardar la cita correctamente
     res.status(200).send(answer);
   } catch (err) {
     res.status(400).send(err);
