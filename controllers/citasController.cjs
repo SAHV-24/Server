@@ -1,4 +1,6 @@
 const Citas = require("../models/Citas.cjs");
+const Usuarios = require("../models/Usuarios.cjs");
+const mongoose = require("mongoose");
 
 // GET ALL
 module.exports.getAll = async (req, res) => {
@@ -122,6 +124,17 @@ module.exports.insert = async (req, res) => {
         "Can't add the same arrangement with the same hour, date, and info",
     });
   }
+
+  // ACTUALIZA EL USUARIO
+  await Usuarios.findByIdAndUpdate(
+    idUsuario,
+    {
+      $push: {
+        ultimasCategorias: { categoriaId: idCategoria },
+      },
+    },
+    { new: true, useFindAndModify: false }
+  );
 
   const cita = new Citas({ ...req.body });
 
