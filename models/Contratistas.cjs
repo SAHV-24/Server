@@ -25,7 +25,7 @@ const Contratistas = new mongoose.Schema({
         required: true,
         ref: "Categoria",
       },
-      precio: {
+      precioCategoria: {
         type: Number,
         required: true,
       },
