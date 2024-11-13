@@ -31,11 +31,6 @@ module.exports.getByUsername = async (req, res) => {
         $unwind: "$usuarioData",
       },
       {
-        $match: {
-          "usuarioData.username": username,
-        },
-      },
-      {
         $lookup: {
           from: "Contratistas",
           localField: "idContratista",
@@ -65,6 +60,14 @@ module.exports.getByUsername = async (req, res) => {
       },
       {
         $unwind: "$categoriaData",
+      },
+      {
+        $match: {
+          $or: [
+            { "usuarioInfo.username": username },
+            { "contratistaUsuario.username": username }, // Ejemplo de otro criterio
+          ],
+        },
       },
       {
         $project: {
