@@ -57,7 +57,7 @@ module.exports.search = async (req, res) => {
           nombre: { $first: "$usuarioData.nombre" }, // Mantener otros campos
           apellido: { $first: "$usuarioData.apellido" },
           ciudad: { $first: "$usuarioData.ciudad" },
-          especialidad: { $first: "$usuarioData.especialidad" },
+          especialidad: { $first: "$especialidad" },
           username: { $first: "$usuarioData.username" },
           fotoDePerfil: { $first: "$usuarioData.fotoDePerfil" },
           categoriasOfrecidas: {
