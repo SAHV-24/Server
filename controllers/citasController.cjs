@@ -64,8 +64,8 @@ module.exports.getByUsername = async (req, res) => {
       {
         $match: {
           $or: [
-            { "usuarioInfo.username": username },
-            { "contratistaUsuario.username": username }, // Ejemplo de otro criterio
+            { "usuarioData.username": username },
+            { "contratistaUsuario.username": username },
           ],
         },
       },
