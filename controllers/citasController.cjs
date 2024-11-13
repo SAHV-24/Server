@@ -71,7 +71,7 @@ module.exports.getByUsername = async (req, res) => {
       },
       {
         $project: {
-          "usuarioData.username": 1,
+          usuarioData: 1,
           contratistaUsuario: 1,
           idContratista: 1,
           categoriaData: 1,
